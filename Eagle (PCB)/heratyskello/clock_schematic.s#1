@@ -4371,6 +4371,7 @@ http://www.fairchildsemi.com/ds/LM/LM7805.pdf</description>
 <part name="JP2" library="adafruit" deviceset="PINHD-1X1" device=""/>
 <part name="JP3" library="adafruit" deviceset="PINHD-1X1" device=""/>
 <part name="LCD" library="adafruit" deviceset="PINHD-1X12" device=""/>
+<part name="REGULATOR1" library="linear" deviceset="78*" device="TV" technology="6"/>
 </parts>
 <sheets>
 <sheet>
@@ -4399,6 +4400,7 @@ http://www.fairchildsemi.com/ds/LM/LM7805.pdf</description>
 <instance part="JP2" gate="G$1" x="121.92" y="17.78"/>
 <instance part="JP3" gate="G$1" x="106.68" y="5.08"/>
 <instance part="LCD" gate="G$1" x="68.58" y="114.3"/>
+<instance part="REGULATOR1" gate="A1" x="-116.84" y="68.58"/>
 </instances>
 <busses>
 </busses>

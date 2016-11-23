@@ -839,7 +839,6 @@ design rules under a new name.</description>
 <contactref element="LCD" pad="12"/>
 <contactref element="LCD" pad="8"/>
 <contactref element="LCD" pad="1"/>
-<contactref element="BUZZER_PROGRAMMING" pad="8"/>
 <contactref element="JP3" pad="1"/>
 <wire x1="52.965075" y1="34.991521875" x2="53.973553125" y2="36" width="0.3048" layer="1"/>
 <wire x1="53.973553125" y1="36" x2="54" y2="36" width="0.3048" layer="1"/>
@@ -890,13 +889,17 @@ design rules under a new name.</description>
 <wire x1="54" y1="36" x2="53" y2="36.440659375" width="0.3048" layer="1"/>
 <wire x1="95.5" y1="51" x2="95.5" y2="35" width="1.016" layer="1"/>
 <wire x1="95.5" y1="35" x2="87" y2="35" width="1.016" layer="1"/>
-<wire x1="87" y1="35" x2="86.91" y2="34.99" width="0" layer="19" extent="1-1"/>
+<wire x1="31" y1="40" x2="31" y2="28.5" width="1.4224" layer="1"/>
+<wire x1="31" y1="28.5" x2="39" y2="20.5" width="1.4224" layer="1"/>
+<wire x1="39" y1="20.5" x2="43" y2="20.5" width="1.4224" layer="1"/>
+<contactref element="BUZZER_PROGRAMMING" pad="4"/>
 <wire x1="95.5" y1="51.5" x2="95.5" y2="51" width="0" layer="19" extent="1-1"/>
 <wire x1="82.5" y1="51.4" x2="82.5" y2="51.5" width="0" layer="19" extent="1-1"/>
 <wire x1="15.48" y1="49.38" x2="15.5" y2="49.5" width="0" layer="19" extent="1-1"/>
+<wire x1="43.03" y1="20.5" x2="43" y2="20.5" width="0" layer="19" extent="1-1"/>
+<wire x1="86.91" y1="24.83" x2="87" y2="35" width="0" layer="19" extent="1-1"/>
 <wire x1="60.81" y1="20.5" x2="52.965075" y2="34.991521875" width="0" layer="19" extent="1-1"/>
 <wire x1="70.97" y1="20.5" x2="60.81" y2="20.5" width="0" layer="19" extent="1-1"/>
-<wire x1="43.03" y1="20.5" x2="52.965075" y2="34.991521875" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="N$1">
 <contactref element="16MHZ" pad="2"/>
@@ -1038,8 +1041,8 @@ design rules under a new name.</description>
 </signal>
 <signal name="D6">
 <contactref element="U1" pad="10"/>
-<contactref element="BUZZER_PROGRAMMING" pad="6"/>
-<wire x1="86.91" y1="29.91" x2="55.227815625" y2="34.2844125" width="0" layer="19" extent="1-1"/>
+<contactref element="BUZZER_PROGRAMMING" pad="2"/>
+<wire x1="55.227815625" y1="34.2844125" x2="86.91" y2="19.75" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="D7">
 <contactref element="U1" pad="11"/>
@@ -1120,30 +1123,30 @@ design rules under a new name.</description>
 </signal>
 <signal name="D10">
 <contactref element="U1" pad="14"/>
-<contactref element="BUZZER_PROGRAMMING" pad="1"/>
-<wire x1="86.91" y1="17.21" x2="56.642028125" y2="35.698628125" width="0" layer="19" extent="1-1"/>
+<contactref element="BUZZER_PROGRAMMING" pad="5"/>
+<wire x1="56.642028125" y1="35.698628125" x2="86.91" y2="27.37" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="D11">
 <contactref element="U1" pad="15"/>
 <contactref element="LCD" pad="7"/>
-<contactref element="BUZZER_PROGRAMMING" pad="2"/>
-<wire x1="86.91" y1="19.75" x2="56.995584375" y2="36.05218125" width="0" layer="19" extent="1-1"/>
-<wire x1="58.27" y1="20.5" x2="86.91" y2="19.75" width="0" layer="19" extent="1-1"/>
+<contactref element="BUZZER_PROGRAMMING" pad="6"/>
+<wire x1="58.27" y1="20.5" x2="86.91" y2="29.91" width="0" layer="19" extent="1-1"/>
+<wire x1="56.995584375" y1="36.05218125" x2="58.27" y2="20.5" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="D12">
 <contactref element="U1" pad="16"/>
 <contactref element="LCD" pad="9"/>
-<contactref element="BUZZER_PROGRAMMING" pad="3"/>
-<wire x1="86.91" y1="22.29" x2="57.3491375" y2="36.405734375" width="0" layer="19" extent="1-1"/>
-<wire x1="63.35" y1="20.5" x2="86.91" y2="22.29" width="0" layer="19" extent="1-1"/>
+<contactref element="BUZZER_PROGRAMMING" pad="7"/>
+<wire x1="63.35" y1="20.5" x2="86.91" y2="32.45" width="0" layer="19" extent="1-1"/>
+<wire x1="57.3491375" y1="36.405734375" x2="63.35" y2="20.5" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="LED_D13">
 <contactref element="U1" pad="17"/>
 <contactref element="R12" pad="2"/>
-<contactref element="BUZZER_PROGRAMMING" pad="4"/>
-<wire x1="86.91" y1="24.83" x2="57.3491375" y2="37.2542625" width="0" layer="19" extent="1-1"/>
 <wire x1="57.3491375" y1="37.2542625" x2="60.49" y2="40.395125" width="0.3048" layer="1"/>
 <wire x1="60.49" y1="40.395125" x2="60.49" y2="40.46" width="0.3048" layer="1"/>
+<contactref element="BUZZER_PROGRAMMING" pad="8"/>
+<wire x1="60.49" y1="40.46" x2="86.91" y2="34.99" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="AREF">
 <contactref element="U1" pad="20"/>
@@ -1164,9 +1167,9 @@ design rules under a new name.</description>
 <contactref element="REGULATOR" pad="1"/>
 </signal>
 <signal name="LIGHT_SWITCH-">
-<contactref element="BUZZER_PROGRAMMING" pad="10"/>
 <contactref element="LCD" pad="2"/>
-<wire x1="45.57" y1="20.5" x2="86.91" y2="40.07" width="0" layer="19" extent="1-1"/>
+<contactref element="BUZZER_PROGRAMMING" pad="1"/>
+<wire x1="45.57" y1="20.5" x2="86.91" y2="17.21" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="3V_BATTERY+">
 <contactref element="JP1" pad="1"/>
