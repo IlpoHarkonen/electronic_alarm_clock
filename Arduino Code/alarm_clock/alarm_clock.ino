@@ -141,7 +141,6 @@ void loop() {
 
 
 
-
 void display_basic() {
   //Print out current time in HH:MM format. Also print the alarm symbol if alarm is set.
   lcd.clear();
@@ -211,6 +210,7 @@ void display_menu_set_time(){
     lcd.print(current_minute+time_modifier_minute);
   }
   else{
+    //Minutes without hours
     blinking = true;
     lcd.setCursor(3,1);
     if(current_hour + time_modifier_hour <10){
