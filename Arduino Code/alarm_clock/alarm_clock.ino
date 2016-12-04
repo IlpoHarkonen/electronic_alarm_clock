@@ -31,6 +31,9 @@ boolean alarm_on = false;
 boolean hours_chosen = false;
 boolean blinking = true;
 
+int alarm_hour = 0;
+int alarm_minute = 0;
+
 
 //Different states the clock can be in. Starts out in basic.
 enum state {
