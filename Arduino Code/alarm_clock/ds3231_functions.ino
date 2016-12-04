@@ -48,7 +48,7 @@ byte *dayOfMonth, byte *month, byte *year) {
 }
 
 
-void updateTime() {
+void update_time() {
   //Reads the time from DS3231 and updates the global variables accordingly
   byte second, minute, hour, dayOfWeek, dayOfMonth, month, year;
   readDS3231time(&second, &minute, &hour, &dayOfWeek, &dayOfMonth, &month, &year);
@@ -60,23 +60,27 @@ void updateTime() {
 
 void set_time(int hours, int minutes) {
   //Changes DS3231 internal time to match the given parameters.
+
+  //First bring the time values to 0-23h and 0-59m
+  while (hours > 23) {
+    hours = hours - 24;
+  }
+  while (hours < 0) {
+    hours = hours - 24;
+  }
+  while (minutes > 59) {
+    minutes = minutes - 60; 
+  }
+  while (minutes < 0) {
+    minutes = minutes + 60;
+  }
+
+  //Then we update the RTC
   byte h_byte = (byte) hours;
   byte m_byte = (byte) minutes;
   
   h_byte = decToBcd(h_byte);
   m_byte = decToBcd(m_byte);
   setDS3231time(1, m_byte, h_byte, 1, 2, 3, 16);
-}
-
-
-void change_hour() {
- 
-}
-
-
-
-
-void change_minute() {
- 
 }
 
