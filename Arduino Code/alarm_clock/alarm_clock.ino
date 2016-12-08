@@ -2,8 +2,10 @@
 #include <Wire.h>
 #define DS3231_I2C_ADDRESS 0x68
 
+//Hello World example pin order:
+//LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+LiquidCrystal lcd(5, 6, 7, 8, 9, 10);
 
 
 //Pins for the left and right buttons and their pressed boolean values and also the buzzer pin
