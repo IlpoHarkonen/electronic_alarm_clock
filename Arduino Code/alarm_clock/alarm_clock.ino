@@ -56,7 +56,7 @@ void setup() {
   //Initialize the push buttons and the buzzer
   pinMode(LB_pin, INPUT);
   pinMode(RB_pin, INPUT);
-  pinMode(buzzer_pin, OUTPUT);
+  //pinMode(buzzer_pin, OUTPUT);
   //initialize the custom alarm icon
   initialize_alarm_symbol();
   //Start up the LCD display
@@ -235,7 +235,6 @@ void play_alarm_sound() {
   int k = 2;
   while (k > 0) {
     tone(buzzer_pin,4000,500);
-    //delay(500);
     noTone(buzzer_pin);
     k -= 1;
   }
