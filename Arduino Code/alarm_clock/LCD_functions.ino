@@ -44,7 +44,7 @@ void print_hour(int optional_modifier = 0) {
   //LCD cursor is left where printing ends.
   //The optional input modifier is an integer which is added to the current hour.
   lcd.setCursor(hour_column, time_row);
-  if(current_hour <10) {
+  if(current_hour + optional_modifier <10) {
     lcd.print('0');
   }
   lcd.print(current_hour + optional_modifier);
@@ -58,7 +58,7 @@ void print_alarm_hour(int optional_modifier = 0) {
   //LCD cursor is left where printing ends.
   //The optional input modifier is an integer which is added to the hour.
   lcd.setCursor(hour_column, time_row);
-  if(alarm_hour <10) {
+  if(alarm_hour + optional_modifier <10) {
     lcd.print('0');
   }
   lcd.print(alarm_hour + optional_modifier);
@@ -73,7 +73,7 @@ void print_minute(int optional_modifier = 0) {
   //The optional input modifier is an integer which is added to the current minute.
   lcd.setCursor(minute_column - 1, time_row);
   lcd.print(':');
-  if(current_minute <10) {
+  if(current_minute + optional_modifier <10) {
     lcd.print('0');
   }
   lcd.print(current_minute + optional_modifier);
@@ -87,7 +87,7 @@ void print_alarm_minute(int optional_modifier = 0) {
   //The optional input modifier is an integer which is added to the minute.
   lcd.setCursor(minute_column - 1, time_row);
   lcd.print(':');
-  if(alarm_minute <10) {
+  if(alarm_minute + optional_modifier <10) {
     lcd.print('0');
   }
   lcd.print(alarm_minute + optional_modifier);

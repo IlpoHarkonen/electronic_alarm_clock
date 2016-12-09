@@ -35,11 +35,11 @@ int time_modifier_minute = 0;
 
 //Booleans for blinking hours or minutes while setting them.
 boolean alarm_on = false;
-boolean hours_chosen = false;
+boolean hours_chosen = true;
 boolean blinking = true;
 
-int alarm_hour = 0;
-int alarm_minute = 0;
+int alarm_hour = 7;
+int alarm_minute = 30;
 
 
 //Different states the clock can be in. Starts out in basic.
@@ -114,6 +114,8 @@ void loop() {
     display_menu_set_alarm();
   }
 
+  //Delay to let the user see response from system before applying further commands
+  delay(loop_interval);
 
   //2. Move between states
   int buttons_held = check_if_buttons_held();
@@ -125,18 +127,11 @@ void loop() {
   }
   
 
-  //INTENSE DEBUGGING
-  lcd.setCursor(0,0);
-  lcd.print(buttons_held);
-
-  
-  
+ 
   if ( (menu_state == basic) && (buttons_held == 1) ) {
     //Move from default display to menu
     menu_state = choose_set_alarm;
   }
-  
-  
   else if ( (menu_state == choose_set_alarm) && ( (LB_pressed == 1) || (RB_pressed == 1)) ) {
     //Move between menu options
     menu_state = choose_set_time;
@@ -148,65 +143,97 @@ void loop() {
   else if ( (menu_state == choose_set_alarm) && (buttons_held == 1) ) {
     //Go to set alarm functional menu
     menu_state = menu_set_alarm;
+    delay(1000);
   }
   else if ( (menu_state == choose_set_time) && (buttons_held == 1) ) {
     //Go to set time functional menu
     menu_state = menu_set_time;
+    delay(1000);
   }
   else if ( (menu_state == menu_set_alarm) && (buttons_held == 1) ) {
     //Set alarm and move to basic display
-    menu_state = basic;
-  
-    //Update alarm time and switch alarm on
-    set_alarm();
+    if (hours_chosen == true) {
+      hours_chosen = false;
+    }
+    else {
+      menu_state = basic;
     
-    //Clear temporal modifiers
-    time_modifier_hour = 0;
-    time_modifier_minute = 0;
-    hours_chosen = false;
+      //Update alarm time and switch alarm on
+      set_alarm();
+      
+      //Clear temporal modifiers
+      time_modifier_hour = 0;
+      time_modifier_minute = 0;
+      hours_chosen = true;
+    }
   }
   else if ( (menu_state == menu_set_time) && (buttons_held == 1) ) {
     //Set time and move to basic display
-    menu_state = basic;
-
-    //Update DS3231 clock internal time
-    setTime(current_hour + time_modifier_hour,current_minute + time_modifier_minute,1,2,3,4);
-
-    
-    //Clear the temporal modifiers
-    time_modifier_hour = 0;
-    time_modifier_minute = 0;
-    hours_chosen = false;
+    if (hours_chosen == true) {
+      hours_chosen = false;
+    }
+    else {
+      menu_state = basic;
+  
+      //Update DS3231 clock internal time
+      int new_hour = current_hour + time_modifier_hour;
+      int new_minute = current_minute + time_modifier_minute;
+      setTime(new_hour,new_minute,1,2,3,4);
+      //RTC.adjust(new_time);
+      Wire.begin();
+      RTC.begin();
+      // January 21, 2014 at 3am you would call:
+      RTC.adjust(DateTime(2014, 1, 21, new_hour, new_minute, 0));
+  
+      
+      //Clear the temporal modifiers
+      time_modifier_hour = 0;
+      time_modifier_minute = 0;
+      hours_chosen = true;
+    }
   }
   
 
   //3. Check for individual keypresses and act accordingly
   //This part concerns only the set_alarm and set_time menus.
-  LB_pressed = check_if_pushed(LB_pin);
-  RB_pressed = check_if_pushed(RB_pin);
   
   //Changing the alarm or clock time temporal variables
   if ( (menu_state == menu_set_alarm) || (menu_state == menu_set_time) ) {
     //Increase or decrese hours
     if (hours_chosen == true) {
       if (LB_pressed == 1) {
-        time_modifier_hour -= 1;
+        time_modifier_hour = time_modifier_hour - 1;
       }
       else if (RB_pressed == 1) {
-        time_modifier_hour += 1;
+        time_modifier_hour = time_modifier_hour + 1;
       }
     }
     
     //Increase or decrease minutes
     else {
       if (LB_pressed == 1) {
-        time_modifier_minute -= 1;
+        time_modifier_minute = time_modifier_minute - 1;
       }
       else if (RB_pressed == 1) {
-        time_modifier_minute += 1;
+        time_modifier_minute = time_modifier_minute + 1;
       }
     }
   }
+
+  //Check that we don't go into negative hours or minutes
+  if (time_modifier_hour + current_hour < 0) {
+    time_modifier_hour = -1 * current_hour;
+  }
+  if (time_modifier_minute + current_minute < 0) {
+    time_modifier_minute = -1 * current_minute;
+  }
+  if (time_modifier_hour + current_hour > 23) {
+    time_modifier_hour = 23 - current_hour;
+  }
+  if (time_modifier_minute + current_minute > 59) {
+    time_modifier_minute = 59 - current_minute;
+  }
+  
 
   //4. Check if alarm sound should be played or set off
   if ( (current_hour == alarm_hour) && (current_minute == alarm_minute) && (alarm_on == true) ) {
@@ -266,6 +293,7 @@ void play_alarm_sound() {
   int k = 2;
   while (k > 0) {
     tone(buzzer_pin,4000,500);
+    delay(500);
     noTone(buzzer_pin);
     k = k - 1;
   }
