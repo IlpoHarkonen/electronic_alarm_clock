@@ -3,7 +3,7 @@
 ///////////////////////////////
 
 int time_row = 1;
-int hour_column = 8;
+int hour_column = 4;
 int minute_column = hour_column + 3;
 
 //Bit art for the custom made alarm symbol. The symbol is in four pieces,
@@ -111,7 +111,7 @@ void display_choose_set_time() {
   //Prints the option of proceeding into set time function
   lcd.clear();
   lcd.setCursor(2,0);
-  lcd.print("Set time?");
+  lcd.print("Set time");
 }
 
 
@@ -121,7 +121,7 @@ void display_choose_set_alarm() {
   //Prints the option of proceeding into set alarm function
   lcd.clear();
   lcd.setCursor(1,0);
-  lcd.print("Set alarm?");
+  lcd.print("Set alarm");
 }
 
 
@@ -134,7 +134,7 @@ void display_menu_set_time() {
   //Print the correct headline
   lcd.clear();
   lcd.setCursor(2,0);
-  lcd.print("Set time:");
+  lcd.print("Set time");
 
   //If editing hours, minutes are always printed and vice versa.
   if (hours_chosen == true) {
@@ -145,13 +145,13 @@ void display_menu_set_time() {
   }
 
   //IF EDITING HOURS
-  if (blinking == true && hours_chosen == true) {
+  if ( (blinking == true) && (hours_chosen == true) ) {
     blinking = false;
     print_hour(time_modifier_hour);
   }
 
   //IF EDITING MINUTES
-  if (blinking == true && hours_chosen == false) {
+  if ( (blinking == true) && (hours_chosen == false) ) {
     blinking = false;
     print_minute(time_modifier_minute);
   }
@@ -173,7 +173,7 @@ void display_menu_set_alarm() {
   //Print the correct headline
   lcd.clear();
   lcd.setCursor(2,0);
-  lcd.print("Set alarm:");
+  lcd.print("Set alarm");
 
   //If editing hours, minutes are always printed and vice versa.
   if (hours_chosen == true) {
@@ -184,13 +184,13 @@ void display_menu_set_alarm() {
   }
   
   //IF EDITING HOURS
-  if (blinking == true && hours_chosen == true) {
+  if ( (blinking == true) && (hours_chosen == true) ) {
     blinking = false;
     print_alarm_hour(time_modifier_hour);
   }
 
   //IF EDITING MINUTES
-  if (blinking == true && hours_chosen == false) {
+  if ( (blinking == true) && (hours_chosen == false) ) {
     blinking = false;
     print_alarm_minute(time_modifier_minute);
   }

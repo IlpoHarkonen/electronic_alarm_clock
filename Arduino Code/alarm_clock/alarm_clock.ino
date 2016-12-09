@@ -1,6 +1,8 @@
 #include <LiquidCrystal.h>
 #include <Wire.h>
-#define DS3231_I2C_ADDRESS 0x68
+#include "RTClib.h"
+#include <Time.h>
+RTC_DS1307 RTC;
 
 //Hello World example pin order:
 //LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
@@ -9,14 +11,14 @@ LiquidCrystal lcd(5, 6, 7, 8, 9, 10);
 
 
 //Pins for the left and right buttons and their pressed boolean values and also the buzzer pin
-int buzzer_pin = 0;
-int LB_pin = 0;//digital pin for the left button
-int RB_pin = 0;//digital pin for the right button
-boolean LB_pressed = false;
-boolean RB_pressed = false;
+int buzzer_pin = 11;
+int LB_pin = 12;//digital pin for the left button
+int RB_pin = 13;//digital pin for the right button
+int LB_pressed = 0;
+int RB_pressed = 0;
 unsigned int check_interval = 100;//Time between button press checks (ms)
 unsigned int time_to_hold = 2000;//Time that is needed to keep the buttons pushed to access menu (ms)
-unsigned int intervals = time_to_hold / check_interval;
+float intervals = time_to_hold / check_interval;
 int max_idle_time = 60000;//Maximum time the user can be in a menu, after which the clock returns back to the basic screen (ms)
 int max_idle_var = max_idle_time;
 int loop_interval = 500;//The time waited between loops. Helps reduce unnecessary calculation and recognize single user inputs. (ms)
@@ -49,7 +51,7 @@ enum state {
   menu_set_alarm//lets the user set alarm
 };
 
-enum state menu_state = basic;
+state menu_state = basic;
 
 
 
@@ -63,9 +65,12 @@ void setup() {
   initialize_alarm_symbol();
   //Start up the LCD display
   lcd.begin(16, 2);
+  
+  //Start the clock
   Wire.begin();
-  //DS3231 RTC clock
-  setDS3231time(1,37,13,1,2,3,16);
+  RTC.begin();
+  setTime(13,37,1,2,3,4);
+  RTC.adjust(now());
 }
 
 
@@ -73,7 +78,13 @@ void setup() {
 
 void loop() {
   //Fetch time variables from DS3231
-  update_time();
+  //update_time();
+  LB_pressed = 0;
+  RB_pressed = 0;
+  
+  DateTime now = RTC.now();
+  current_hour = now.hour();
+  current_minute = now.minute();
   
   //1. Print the correct state to LCD
   //2. Check if both buttons are held or one button is pushed to move between states accordingly
@@ -105,31 +116,47 @@ void loop() {
 
 
   //2. Move between states
-  boolean buttons_held = check_if_buttons_held();
-  if (menu_state == basic && buttons_held == true) {
+  int buttons_held = check_if_buttons_held();
+  LB_pressed = check_if_pushed(LB_pin);
+  RB_pressed = check_if_pushed(RB_pin);
+  if (buttons_held == 1) {
+    LB_pressed = 0;
+    RB_pressed = 0;
+  }
+  
+
+  //INTENSE DEBUGGING
+  lcd.setCursor(0,0);
+  lcd.print(buttons_held);
+
+  
+  
+  if ( (menu_state == basic) && (buttons_held == 1) ) {
     //Move from default display to menu
     menu_state = choose_set_alarm;
   }
-  else if (menu_state == choose_set_alarm && (check_if_pushed(LB_pin) == true | check_if_pushed(RB_pin) == true)) {
+  
+  
+  else if ( (menu_state == choose_set_alarm) && ( (LB_pressed == 1) || (RB_pressed == 1)) ) {
     //Move between menu options
     menu_state = choose_set_time;
   }
-  else if (menu_state == choose_set_time && (check_if_pushed(LB_pin) == true | check_if_pushed(RB_pin) == true)) {
+  else if ( (menu_state == choose_set_time) && ( (LB_pressed == 1) || (RB_pressed == 1)) ) {
     //Move between menu options
     menu_state = choose_set_alarm;
   }
-  else if (menu_state == choose_set_alarm && buttons_held == true) {
+  else if ( (menu_state == choose_set_alarm) && (buttons_held == 1) ) {
     //Go to set alarm functional menu
     menu_state = menu_set_alarm;
   }
-  else if (menu_state == choose_set_time && buttons_held == true) {
+  else if ( (menu_state == choose_set_time) && (buttons_held == 1) ) {
     //Go to set time functional menu
     menu_state = menu_set_time;
   }
-  else if (menu_state == menu_set_alarm && buttons_held == true) {
+  else if ( (menu_state == menu_set_alarm) && (buttons_held == 1) ) {
     //Set alarm and move to basic display
     menu_state = basic;
-    
+  
     //Update alarm time and switch alarm on
     set_alarm();
     
@@ -138,12 +165,12 @@ void loop() {
     time_modifier_minute = 0;
     hours_chosen = false;
   }
-  else if (menu_state == menu_set_time && buttons_held == true) {
+  else if ( (menu_state == menu_set_time) && (buttons_held == 1) ) {
     //Set time and move to basic display
     menu_state = basic;
 
     //Update DS3231 clock internal time
-    set_time(current_hour + time_modifier_hour, current_minute + time_modifier_minute);
+    setTime(current_hour + time_modifier_hour,current_minute + time_modifier_minute,1,2,3,4);
 
     
     //Clear the temporal modifiers
@@ -151,7 +178,7 @@ void loop() {
     time_modifier_minute = 0;
     hours_chosen = false;
   }
-
+  
 
   //3. Check for individual keypresses and act accordingly
   //This part concerns only the set_alarm and set_time menus.
@@ -159,40 +186,42 @@ void loop() {
   RB_pressed = check_if_pushed(RB_pin);
   
   //Changing the alarm or clock time temporal variables
-  if (menu_state == menu_set_alarm | menu_state == menu_set_time) {
+  if ( (menu_state == menu_set_alarm) || (menu_state == menu_set_time) ) {
     //Increase or decrese hours
     if (hours_chosen == true) {
-      if (LB_pressed == true) {
+      if (LB_pressed == 1) {
         time_modifier_hour -= 1;
       }
-      else if (RB_pressed == true) {
+      else if (RB_pressed == 1) {
         time_modifier_hour += 1;
       }
     }
     
     //Increase or decrease minutes
     else {
-      if (LB_pressed == true) {
+      if (LB_pressed == 1) {
         time_modifier_minute -= 1;
       }
-      else if (RB_pressed == true) {
+      else if (RB_pressed == 1) {
         time_modifier_minute += 1;
       }
     }
   }
 
   //4. Check if alarm sound should be played or set off
-  if (current_hour == alarm_hour && current_minute == alarm_minute && alarm_on = true) {
+  if ( (current_hour == alarm_hour) && (current_minute == alarm_minute) && (alarm_on == true) ) {
     play_alarm_sound();
-    if (LB_pressed == true | RB_pressed == true) {
+    if ( (LB_pressed == 1) || (RB_pressed == 1) ) {
       alarm_on = false;
     }
   }
 
+  /*
   //5. Return to basic clock screen if the user has been idle for too long
   // Also resets all temporal modifiers and turns off the alarm.
-  if (menu_state != basic && max_idle_var > 0) {
-    max_idle_time -= loop_interval;
+  
+  if ( (menu_state != basic) && (max_idle_var > 0)) {
+    max_idle_time = max_idle_time - loop_interval;
   }
   if (max_idle_time < 0) {
     max_idle_var = max_idle_time;
@@ -201,7 +230,7 @@ void loop() {
     time_modifier_minute = 0;
     alarm_on = false; 
   }
-  
+  */
 
 
   //Add delay to the loop to avoid gaining too many consecutive user inputs from a single button push
@@ -238,7 +267,7 @@ void play_alarm_sound() {
   while (k > 0) {
     tone(buzzer_pin,4000,500);
     noTone(buzzer_pin);
-    k -= 1;
+    k = k - 1;
   }
 }
 
@@ -248,21 +277,24 @@ boolean check_if_buttons_held() {
   //We check if buttons are pressed for the specified time to hold and return the corresponding boolean value
   LB_pressed = check_if_pushed(LB_pin);
   RB_pressed = check_if_pushed(RB_pin);
-  unsigned int i = 0;
-  if (LB_pressed == true && RB_pressed == true) {
-    while (i < intervals && LB_pressed == true && RB_pressed == true) {
+  float i = 0;
+  if (LB_pressed == 1 && RB_pressed == 1) {
+    while ( (i < intervals) && ((LB_pressed == 1) && (RB_pressed == 1)) ) {
       delay(check_interval);
       LB_pressed = check_if_pushed(LB_pin);
       RB_pressed = check_if_pushed(RB_pin);
-      i += 1;
+      i = i + 1;
     }
   }
   //If button presses are confirmed we move to the menu
+  LB_pressed = 0;
+  RB_pressed = 0;
+  
   if (i == intervals) {
-    return true;
+    return 1;
   }
   else {
-    return false;
+    return 0;
   }
 }
 
@@ -272,11 +304,12 @@ boolean check_if_buttons_held() {
 boolean check_if_pushed(int button_pin) {
   //check if a button using a given pin is pressed or not and returns the corresponding boolean value
   int button_state = digitalRead(button_pin);
+  delay(10);
   if (button_state == 1) {
-    return true;
+    return 1;
   }
   else {
-    return false;
+    return 0;
   }
 }
 
